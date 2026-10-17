@@ -1,4 +1,4 @@
-cream// ============================================================================
+// ============================================================================
 // Bardani Ultra AI - Complete Single-File Express Server & Frontend App
 // Run: npm init -y && npm i express multer cors
 // Start: node server.js (Ensure GEMINI_API_KEY environment variable is set)
@@ -14,8 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 // Max 10MB per photo to support high-resolution reference images
-const upload = multer({ 
-  limits: { fileSize: 10 * 1024 * 1024 } 
+const upload = multer({
+  limits: { fileSize: 10 * 1024 * 1024 }
 });
 
 // Image-capable Gemini models in order of priority with automatic fallback
@@ -127,7 +127,7 @@ const GIRL_TYPES = {
 const STYLES = {
   none: "authentic unedited camera photograph, true skin tones, natural authentic lighting, zero artificial filters",
   ultra_4k: "ultra realistic 4K HDR photograph, hyper-detailed skin texture and pores, authentic eyes, sharp focus, natural lighting",
-  const vehicleText = (opts.vehicle && opts.vehicle !== "none" && VEHICLES[opts.vehicle]) ? ${VEHICLES[opts.vehicle]} : "";
+  ultra_8k: "ultra realistic 8K UHD masterpiece portrait, pin-sharp details, authentic facial geometry, true lighting",
   cinematic: "cinematic 35mm film still, warm authentic movie lighting, realistic depth of field",
   studio_hd: "professional clean studio portrait, balanced highlights, crisp high definition details",
   dslr_portrait: "shot on 85mm f/1.4 lens, natural skin tones, sharp focus on facial features, authentic bokeh"
@@ -135,9 +135,8 @@ const STYLES = {
 
 function buildPrompt(opts, hasGirlUpload, isCoupleMode) {
   const sceneText = SCENES[opts.scene] || SCENES.none;
-  
-  const vehicleText = (opts.vehicle && opts.vehicle !== "none" && VEHICLES[opts.vehicle] ? VEHICLES[opts.vehicle] : "";
-  
+  const vehicleText = (opts.vehicle && opts.vehicle !== "none" && VEHICLES[opts.vehicle]) ? `${VEHICLES[opts.vehicle]}.` : "";
+  const poseText = POSES[opts.pose] || POSES.none;
   const styleText = STYLES[opts.style] || STYLES.ultra_4k;
 
   // Strict 100% Face preservation without assuming specific facial hair
@@ -196,17 +195,8 @@ async function callGeminiImageAPI(prompt, imageParts, apiKey) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const payload = {
-      contents: [
-        {
-          parts: [
-            { text: prompt },
-            ...imageParts
-          ]
-        }
-      ],
-      generationConfig: {
-        responseModalities: ["IMAGE"]
-      }
+      contents: [{ parts: [{ text: prompt }, ...imageParts] }],
+      generationConfig: { responseModalities: ["IMAGE"] }
     };
 
     try {
@@ -215,20 +205,16 @@ async function callGeminiImageAPI(prompt, imageParts, apiKey) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-
       const data = await response.json();
-
       if (!response.ok || data.error) {
         const msg = data.error?.message || `HTTP ${response.status}`;
         lastError = new Error(`Model [${model}] failed: ${msg}`);
         console.warn(`[Bardani AI Warning] ${lastError.message}`);
         continue;
       }
-
       const parts = data.candidates?.[0]?.content?.parts || [];
       const imagePart = parts.find(p => p.inlineData || p.inline_data);
       const img = imagePart?.inlineData || imagePart?.inline_data;
-
       if (img && img.data) {
         const mime = img.mimeType || img.mime_type || "image/jpeg";
         return `data:${mime};base64,${img.data}`;
@@ -248,8 +234,8 @@ app.post("/api/generate", upload.fields([{ name: "photo1" }, { name: "photo2" }]
   try {
     const apiKey = req.body.apiKey?.trim() || process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ 
-        error: "GEMINI_API_KEY उपलब्ध नहीं है। कृपया .env सेट करें या ऐप में API Key दर्ज करें।" 
+      return res.status(500).json({
+        error: "GEMINI_API_KEY उपलब्ध नहीं है। कृपया .env सेट करें या ऐप में API Key दर्ज करें।"
       });
     }
 
@@ -321,105 +307,11 @@ app.post("/api/generate", upload.fields([{ name: "photo1" }, { name: "photo2" }]
 });
 
 app.get("/", (req, res) => {
-  res.send(`<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bardani Ultra AI</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  body { font-family: 'Plus Jakarta Sans', sans-serif; }
-</style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen py-6 px-3 sm:px-4 selection:bg-rose-500 selection:text-white">
-  <div class="max-w-6xl mx-auto space-y-5">
-    
-    <!-- Header with Pig Vector Logo -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/95 border border-slate-800 p-4 rounded-2xl shadow-2xl backdrop-blur-md">
-      <div class="flex items-center gap-3.5">
-        
-        <!-- Official Cute Pig SVG Badge -->
-        <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 via-rose-500 to-pink-400 shadow-xl shadow-rose-500/30 shrink-0">
-          <svg class="w-full h-full rounded-full" viewBox="0 0 500 500">
-            <defs>
-              <linearGradient id="pigBg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#fff1f2"/>
-                <stop offset="40%" stop-color="#fecdd3"/>
-                <stop offset="100%" stop-color="#fda4af"/>
-              </linearGradient>
-              <linearGradient id="pigSkin" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#fce7f3"/>
-                <stop offset="50%" stop-color="#f472b6"/>
-                <stop offset="100%" stop-color="#ec4899"/>
-              </linearGradient>
-              <linearGradient id="pigSnout" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#fb7185"/>
-                <stop offset="100%" stop-color="#be123c"/>
-              </linearGradient>
-            </defs>
-            <circle cx="250" cy="250" r="240" fill="url(#pigBg)"/>
-            <circle cx="250" cy="250" r="232" fill="none" stroke="#fb7185" stroke-width="8" stroke-dasharray="16 8"/>
-            <path d="M125 185 C85 95, 160 55, 195 125 Z" fill="url(#pigSkin)"/>
-            <path d="M375 185 C415 95, 340 55, 305 125 Z" fill="url(#pigSkin)"/>
-            <ellipse cx="250" cy="270" rx="160" ry="145" fill="url(#pigSkin)"/>
-            <ellipse cx="160" cy="298" rx="25" ry="16" fill="#f43f5e" opacity="0.38"/>
-            <ellipse cx="340" cy="298" rx="25" ry="16" fill="#f43f5e" opacity="0.38"/>
-            <ellipse cx="185" cy="230" rx="19" ry="25" fill="#1e1b4b"/>
-            <circle cx="178" cy="220" r="8.5" fill="#ffffff"/>
-            <ellipse cx="315" cy="230" rx="19" ry="25" fill="#1e1b4b"/>
-            <circle cx="308" cy="220" r="8.5" fill="#ffffff"/>
-            <ellipse cx="250" cy="295" rx="65" ry="46" fill="url(#pigSnout)"/>
-            <ellipse cx="225" cy="296" rx="11" ry="16" fill="#881337"/>
-            <ellipse cx="275" cy="296" rx="11" ry="16" fill="#881337"/>
-            <path d="M225 358 Q250 378 275 358" stroke="#881337" stroke-width="6" fill="none" stroke-linecap="round"/>
-          </svg>
-        </div>
-
-        <div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">
-              BARDANI <span class="text-rose-500">ULTRA AI</span>
-            </h1>
-            <span class="px-2.5 py-0.5 bg-amber-500/15 border border-amber-500/40 rounded-full text-amber-400 text-[11px] font-bold uppercase tracking-wider">
-              फाउंडर व ऑफिशियल लोगो ✓
-            </span>
-          </div>
-          <p class="text-slate-400 text-xs mt-0.5">
-            अल्ट्रा रियलिस्टिक 4K/8K सोलो और रोमांटिक कपल फोटो जनरेटर (100% Face & Clothes Match)
-          </p>
-        </div>
-      </div>
-
-      <!-- Controls: API Key & Live Badge -->
-      <div class="flex items-center gap-2">
-        <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-xl flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          🟢 LIVE
-        </span>
-        <button id="btnToggleKey" type="button" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium border border-slate-700">
-          🔑 Custom Key
-        </button>
-      </div>
-    </div>
-
-    <!-- API Key Input Drawer -->
-    <div id="keyBox" class="hidden bg-slate-900 border border-slate-800 p-3 rounded-xl max-w-lg mx-auto flex items-center gap-2">
-      <input type="password" id="customApiKey" placeholder="Enter GEMINI_API_KEY if needed..." class="w-full bg-slate-950 border border-slate-700 text-xs px-3 py-2 rounded-lg text-slate-200 focus:outline-none focus:border-rose-500">
-      <button id="btnClearKey" class="text-xs text-rose-400 hover:text-rose-300 px-2">Clear</button>
-    </div>
-
-    <!-- Error Banner -->
-    <div id="errorBox" class="hidden bg-rose-950/60 border border-rose-500/40 text-rose-200 text-xs p-3.5 rounded-xl shadow-lg"></div>
-
-  </div>
-</body>
-</html>`);
+  res.send(`Bardani Ultra AI`);
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log(`[Bardani AI] Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
-  
+      
