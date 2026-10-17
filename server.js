@@ -1,4 +1,4 @@
-// ============================================================================
+cream// ============================================================================
 // Bardani Ultra AI - Complete Single-File Express Server & Frontend App
 // Run: npm init -y && npm i express multer cors
 // Start: node server.js (Ensure GEMINI_API_KEY environment variable is set)
@@ -127,7 +127,7 @@ const GIRL_TYPES = {
 const STYLES = {
   none: "authentic unedited camera photograph, true skin tones, natural authentic lighting, zero artificial filters",
   ultra_4k: "ultra realistic 4K HDR photograph, hyper-detailed skin texture and pores, authentic eyes, sharp focus, natural lighting",
-  ultra_8k: "ultra realistic 8K UHD masterpiece portrait, pin-sharp details, authentic facial geometry, true lighting",
+  const vehicleText = (opts.vehicle && opts.vehicle !== "none" && VEHICLES[opts.vehicle]) ? ${VEHICLES[opts.vehicle]} : "";
   cinematic: "cinematic 35mm film still, warm authentic movie lighting, realistic depth of field",
   studio_hd: "professional clean studio portrait, balanced highlights, crisp high definition details",
   dslr_portrait: "shot on 85mm f/1.4 lens, natural skin tones, sharp focus on facial features, authentic bokeh"
