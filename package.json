@@ -1,15 +1,14 @@
 {
-""name": "bardani-ultra-ai",
-"version": "1.0.0",
-"description": "Bardani Ultra A",
-"main": "server.js",
-"scripts": {
-"start": "node server.js"
-},
-"dependencies": {
-"express": "^4.19.2",
-"cors": "^5.0.0",
-"multer": "1.4.5"
+  "name": "bardani-ultra-ai",
+  "version": "1.0.0",
+  "description": "Bardani Ultra AI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.2"
+  }
 }
-}
-
