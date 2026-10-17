@@ -1,4 +1,3 @@
-```javascript
 // ============================================================================
 // Bardani Ultra AI - Complete Single-File Express Server & Frontend App
 // Run: npm init -y && npm i express multer cors
@@ -413,10 +412,13 @@ app.get("/", (req, res) => {
     <!-- Error Banner -->
     <div id="errorBox" class="hidden bg-rose-950/60 border border-rose-500/40 text-rose-200 text-xs p-3.5 rounded-xl shadow-lg"></div>
 
-    <!-- Main Workspace -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-      
-      <!-- Controls Column (7 cols) -->
-      <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-5 space-y-4 shadow-xl">
-        
-        <!-- Step
+  </div>
+</body>
+</html>`);
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`[Bardani AI] Server running on port ${PORT}`);
+});
+  
