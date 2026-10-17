@@ -136,7 +136,7 @@ const STYLES = {
 function buildPrompt(opts, hasGirlUpload, isCoupleMode) {
   const sceneText = SCENES[opts.scene] || SCENES.none;
   const vehicleText = (opts.vehicle && opts.vehicle !== "none" && VEHICLES[opts.vehicle]) ? `${VEHICLES[opts.vehicle]}.` : "";
-  const vehicleText = (opts.vehicle && opts.vehicle !== "none" && VEHICLES[opts.vehicle]) ? VEHICLES[opts.vehicle] : "";
+  const vehicleText = (opts.vehicle && opts.vehicle !== "none" && VEHICLES[opts.vehicle] ? VEHICLES[opts.vehicle] : "";
   
   const styleText = STYLES[opts.style] || STYLES.ultra_4k;
 
